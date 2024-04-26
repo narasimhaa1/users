@@ -51,4 +51,4 @@ eureka:
     prefer-ip-address: true
 
 
-// http://34.122.84.243:5761/
+# http://34.122.84.243:5761/
