@@ -1,4 +1,5 @@
-// This Jenkinsfile is for the User Deployment.
+
+// This Jenkinsfile is for the Eureka Deployment.
 pipeline {
     agent {
         label 'k8s-slave'
@@ -34,18 +35,18 @@ pipeline {
         )
     }
     environment {
-        APPLICATION_NAME = "user"
+        APPLICATION_NAME = "users"
         POM_VERSION = readMavenPom().getVersion()
         POM_PACKAGING = readMavenPom().getPackaging()
         //version+ packaging
-        DOCKER_HUB = "docker.io/i27devopsb2"
-        DOCKER_CREDS = credentials('i27devopsb2_docker_creds')
-        SONAR_URL = "http://34.122.97.102:9000"
-        SONAR_TOKEN = credentials('sonar_creds')
+        DOCKER_HUB = "docker.io/narasimhaa"
+        DOCKER_CREDS = credentials('narasimhaa_docker_creds')
+        //SONAR_URL = "http://34.122.97.102:9000"
+        //SONAR_TOKEN = credentials('sonar_creds')
     }
     tools {
-        maven 'Maven-3.8.8'
-        jdk 'JDK-17'
+        maven 'MAVEN-3.8.8'
+        jdk 'jdk-17'
     }
     stages {
         stage ('Build'){
@@ -85,7 +86,7 @@ pipeline {
                 }
             }
         }
-        stage ('Sonar') {
+        /* stage ('Sonar') {
             when {
                     expression {
                         params.scanOnly == 'yes'  
@@ -96,7 +97,7 @@ pipeline {
                 withSonarQubeEnv('SonarQube'){ // manage jenkins > configure  > sonarqube scanner
                     sh """
                         mvn clean verify sonar:sonar \
-                            -Dsonar.projectKey=i27-user \
+                            -Dsonar.projectKey=i27-eureka \
                             -Dsonar.host.url=${env.SONAR_URL} \
                             -Dsonar.login=${SONAR_TOKEN}
                     """
@@ -109,7 +110,7 @@ pipeline {
 
             
             }
-        }
+        } */
         /*
         stage ('Docker Format') {
             steps {
@@ -195,7 +196,7 @@ pipeline {
             }
             steps {
                 timeout(time: 300, unit: 'SECONDS') {
-                    input message: "Deploying ${env.APPLICATION_NAME} to prod ????", ok: 'yes', submitter: 'krish'
+                    input message: "Deploying ${env.APPLICATION_NAME} to prod ????", ok: 'yes', submitter: 'navaneeth'
                 }
                 script {
                     imageValidation().call()
@@ -230,7 +231,7 @@ def dockerBuildandPush(){
 def dockerDeploy(envDeploy, hostPort, contPort) {
     return {
     echo "******************************** Deploying to $envDeploy Environment ********************************"
-    withCredentials([usernamePassword(credentialsId: 'maha_docker_vm_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+    withCredentials([usernamePassword(credentialsId: 'reddy_docker_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
         // some block
         // With the help of this block, ,the slave will be connecting to docker-vm and execute the commands to create the containers.
         //sshpass -p ssh -o StrictHostKeyChecking=no user@host command_to_run
@@ -301,10 +302,3 @@ def buildApp() {
 // stop ==> remove 
 
 // run
-
-
-// User, container port is 8232
-// dev 5232
-// test 6232
-//stage 7232
-//prod 8232
